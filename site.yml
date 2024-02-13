@@ -7,16 +7,43 @@
   - name: Install Updates on CentOS
     tags: always
     dnf:
-      update_only: yes
       update_cache: yes
+    changed_when: false
     when: ansible_distribution == "CentOS"
 
   - name: Install Updates on Ubunt
     tags: always
     apt:
-      upgrade: dist
       update_cache: yes
+    changed_when: false
     when: ansible_distribution == "CentOS"
+
+- hosts: all
+  become: true
+  tasks:
+
+  - name: Add SSH Key for Simone
+    tags: always
+    authorized_key:
+      user: simone
+      key: "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIFzwQefVr5yIP2E3O442mhDyGggKkYRT6Hy4ocYg0oYC ansible"
+
+- hosts: workstations
+  become: true
+  tasks:
+
+  - name: Install UNZIP
+    package:
+      name: unzip
+
+  - name: install terraform
+    unarchive:
+      src: https://releases.hashicorp.com/terraform/0.12.28/terraform_0.12.28_linux_amd64.zip
+      dest: /usr/local/bin
+      remote_src: yes
+      mode: 0755
+      owner: root
+      group: root
 
 - hosts: web_servers
   become: true
@@ -40,6 +67,30 @@
         - php
       state: latest
     when: ansible_distribution == "CentOS"
+
+  - name: Start HTTPD on CentOS
+    tags: apache,centos,httpd
+    service:
+      name: httpd
+      state: started
+    enabled: yes
+    when: ansible_distribution == "CentOS"
+
+  - name: Change E-Mail Address for admin
+    tags: apache,centos,httpd
+    lineinfile:
+      path: /etc/httpd/conf/httpd.conf
+      regexp: '^ServerAdmin'
+      line: ServerAdmin somebody@somewhere.net
+    when: ansible_distribution == "CentOS"
+    register: httpd
+
+  - name: Restart HTTPD in CentOS
+    tags: apache,centos,httpd
+    service:
+      name: httpd
+      state: restarted
+    when: httpd.changed
 
   - name: Copy Default HTML file for Site
     tags: apache,apache2,httpd

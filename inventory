@@ -6,3 +6,6 @@ ubuntu@ec2-35-175-197-58.compute-1.amazonaws.com
 
 [file_servers]
 ubuntu@ec2-54-167-5-152.compute-1.amazonaws.com
+
+[workstations]
+
