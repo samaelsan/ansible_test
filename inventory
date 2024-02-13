@@ -1,3 +1,8 @@
-ubuntu@ec2-54-82-89-234.compute-1.amazonaws.com apache_package=apache2 php_package=libapache2-mod-php
-ubuntu@ec2-35-175-197-58.compute-1.amazonaws.com apache_package=apache2 php_package=libapache2-mod-php
-ubuntu@ec2-54-167-5-152.compute-1.amazonaws.com apache_package=httpd php_package=php
+[web_servers]
+ubuntu@ec2-54-82-89-234.compute-1.amazonaws.com
+
+[db_servers]
+ubuntu@ec2-35-175-197-58.compute-1.amazonaws.com
+
+[file_servers]
+ubuntu@ec2-54-167-5-152.compute-1.amazonaws.com
